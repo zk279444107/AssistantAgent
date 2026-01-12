@@ -259,12 +259,12 @@ public class EvaluationPromptInjectionHook extends ModelHook {
         // 创建 AssistantMessage with ToolCall
         AssistantMessage.ToolCall toolCall = new AssistantMessage.ToolCall(
                 toolCallId, "function", PROMPT_INJECTION_TOOL_NAME, "{}");
-        AssistantMessage assistantMsg = new AssistantMessage("", Map.of(), List.of(toolCall));
+        AssistantMessage assistantMsg = AssistantMessage.builder().content("").toolCalls(List.of(toolCall)).build();
 
         // 创建 ToolResponseMessage with ToolResponse
         ToolResponseMessage.ToolResponse toolResponse = new ToolResponseMessage.ToolResponse(
                 toolCallId, PROMPT_INJECTION_TOOL_NAME, guidance);
-        ToolResponseMessage toolMsg = new ToolResponseMessage(List.of(toolResponse));
+        ToolResponseMessage toolMsg = ToolResponseMessage.builder().responses(List.of(toolResponse)).build();
 
         // 将消息对放入 updates
         List<Message> incrementalMessages = new ArrayList<>();

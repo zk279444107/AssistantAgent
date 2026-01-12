@@ -280,11 +280,11 @@ public class CodeactEvaluationResultAttacher {
 
 		// 4.1 创建 AssistantMessage with ToolCall
 		AssistantMessage.ToolCall toolCall = new AssistantMessage.ToolCall(toolCallId, "function", EVALUATION_TOOL_NAME, "{}");
-		AssistantMessage assistantMsg = new AssistantMessage("", Map.of(), List.of(toolCall));
+		AssistantMessage assistantMsg = AssistantMessage.builder().content("").toolCalls(List.of(toolCall)).build();
 
 		// 4.2 创建 ToolResponseMessage with ToolResponse
 		ToolResponseMessage.ToolResponse toolResponse = new ToolResponseMessage.ToolResponse(toolCallId, EVALUATION_TOOL_NAME, newEvaluationText);
-		ToolResponseMessage toolMsg = new ToolResponseMessage(List.of(toolResponse));
+		ToolResponseMessage toolMsg = ToolResponseMessage.builder().responses(List.of(toolResponse)).build();
 
 		// 5. 将增量消息对放入 updates（只包含新的这两条消息）
 		List<Message> incrementalMessages = new ArrayList<>();
