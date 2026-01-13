@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
  * GraalVM-based code executor.
  * Executes Python code using GraalVM's Polyglot API.
  *
- * @author Spring AI Alibaba
+ * @author Assistant Agent Team
  * @since 1.0.0
  */
 public class GraalCodeExecutor {
