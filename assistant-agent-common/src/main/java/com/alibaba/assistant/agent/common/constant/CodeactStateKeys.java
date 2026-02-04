@@ -28,6 +28,8 @@ public final class CodeactStateKeys {
 		// Utility class
 	}
 
+	// ==================== 代码生成上下文 ====================
+
 	/**
 	 * Key for storing the list of generated codes in the current session
 	 * Type: List&lt;GeneratedCode&gt;
@@ -63,7 +65,6 @@ public final class CodeactStateKeys {
 	 * Type: Boolean
 	 */
 	public static final String INITIAL_CODE_GEN_DONE = "initial_code_gen_done";
-
 
 	// ==================== 工具白名单配置 ====================
 
