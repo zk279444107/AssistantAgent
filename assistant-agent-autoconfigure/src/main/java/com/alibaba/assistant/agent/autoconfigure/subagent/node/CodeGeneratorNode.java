@@ -161,10 +161,10 @@ public class CodeGeneratorNode implements NodeActionWithConfig {
 			logger.info("CodeGeneratorNode#apply 代码生成成功: functionName={}, code={}", functionName, generatedCode.replace("\n","\\n"));
 
 			// 7. 返回结果（放入outputKey），同时将messages写入state供after-model hook访问
-			// 使用专用key "codeact_node_messages" 避免与框架 "messages"(AppendStrategy) 冲突
+			// 使用专用key CodeactStateKeys.CODEACT_NODE_MESSAGES 避免与框架 "messages"(AppendStrategy) 冲突
 			Map<String, Object> result = new HashMap<>();
 			result.put(outputKey, generatedCode);
-			result.put("codeact_node_messages", messages);
+			result.put(CodeactStateKeys.CODEACT_NODE_MESSAGES, messages);
 			return result;
 
 		} catch (Exception e) {
