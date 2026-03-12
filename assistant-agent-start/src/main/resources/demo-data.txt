@@ -1,0 +1,15 @@
+Spring AI Alibaba is an AI application development framework based on Spring AI, providing seamless integration with Alibaba Cloud's DashScope (Tongyi Qianwen) models.
+It simplifies the development of AI-powered applications by offering abstractions for chat models, embedding models, and vector stores.
+Developers can easily switch between different AI providers with minimal code changes.
+Key features include:
+- Chat Client API for conversational AI
+- Embedding Client API for vector generation
+- Vector Store integration (Chroma, Milvus, etc.)
+- Function Calling support
+- RAG (Retrieval-Augmented Generation) support
+
+To get started with Spring AI Alibaba, add the starter dependency to your project.
+Then configure your API key in application.properties.
+You can use the ChatClient to interact with the model.
+For RAG applications, use the VectorStore to index and retrieve documents.
+The framework handles the complexity of API calls and data conversion.

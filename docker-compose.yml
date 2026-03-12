@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: assistant-agent-chroma
+    ports:
+      - "8000:8000"
+    volumes:
+      - D:/docker/chroma/data:/data
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3

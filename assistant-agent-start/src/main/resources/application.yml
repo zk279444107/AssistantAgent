@@ -19,6 +19,20 @@ spring.ai.dashscope:
   chat:
     options:
       model: qwen-max
+  embedding:
+    options:
+      # 推荐使用 text-embedding-v3，它是最新一代模型，支持多语言（包括中文）且效果更好
+      # 可选值: text-embedding-v1, text-embedding-v2, text-embedding-v3
+      model: text-embedding-v3
+
+# ============================================================================
+# Vector Store - Chroma Configuration
+# ============================================================================
+spring.ai.vectorstore.chroma:
+  client:
+    host: localhost
+    port: 8000
+  initialize-schema: true
 
 # ============================================================================
 # Experience Module - with FastIntent enabled

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base Search</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #2196F3;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1976D2;
+        }
+        .results-info {
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .result-item {
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            transition: box-shadow 0.2s;
+        }
+        .result-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+        .result-title {
+            font-size: 1.2rem;
+            color: #1a0dab;
+            font-weight: 500;
+        }
+        .result-score {
+            font-size: 0.9rem;
+            color: #00695c;
+            background-color: #e0f2f1;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .result-snippet {
+            color: #4d5156;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        .result-meta {
+            font-size: 0.85rem;
+            color: #70757a;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .meta-tag {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        .keyword-tag {
+            background-color: #fff3e0;
+            color: #e65100;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Knowledge Base Search</h1>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Enter keywords to search..." onkeypress="handleKeyPress(event)">
+            <button onclick="performSearch()">Search</button>
+        </div>
+
+        <div id="loading" class="loading">Searching...</div>
+        <div id="resultsInfo" class="results-info"></div>
+        <div id="resultsList"></div>
+        <div id="noResults" class="no-results">No documents found matching your query.</div>
+    </div>
+
+    <script>
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        }
+
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const loading = document.getElementById('loading');
+            const resultsList = document.getElementById('resultsList');
+            const resultsInfo = document.getElementById('resultsInfo');
+            const noResults = document.getElementById('noResults');
+
+            // Reset UI
+            loading.style.display = 'block';
+            resultsList.innerHTML = '';
+            resultsInfo.textContent = '';
+            noResults.style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/knowledge/ingest/search?query=${encodeURIComponent(query)}&topK=20`);
+                const data = await response.json();
+
+                loading.style.display = 'none';
+
+                if (data.success && data.results && data.results.length > 0) {
+                    resultsInfo.textContent = `Found ${data.count} results`;
+                    
+                    data.results.forEach(item => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.className = 'result-item';
+                        
+                        // Extract metadata
+                        const metadata = item.metadata?.extensions || {};
+                        const keywords = metadata.matched_keywords || [];
+                        const source = metadata.source || 'Unknown Source';
+                        const date = metadata.ingestion_timestamp ? new Date(metadata.ingestion_timestamp).toLocaleDateString() : '';
+                        
+                        // Build keywords HTML
+                        const keywordsHtml = Array.isArray(keywords) 
+                            ? keywords.map(k => `<span class="keyword-tag">${k}</span>`).join('')
+                            : '';
+
+                        resultDiv.innerHTML = `
+                            <div class="result-header">
+                                <div class="result-title">${item.title || 'Untitled Document'}</div>
+                                <div class="result-score">Score: ${(item.score * 100).toFixed(1)}%</div>
+                            </div>
+                            <div class="result-snippet">${item.snippet || 'No preview available'}</div>
+                            <div class="result-meta">
+                                <div class="meta-tag"><strong>Source:</strong> ${source}</div>
+                                ${date ? `<div class="meta-tag"><strong>Date:</strong> ${date}</div>` : ''}
+                                ${keywordsHtml ? `<div class="meta-tag"><strong>Matched Keywords:</strong> ${keywordsHtml}</div>` : ''}
+                            </div>
+                        `;
+                        resultsList.appendChild(resultDiv);
+                    });
+                } else {
+                    noResults.style.display = 'block';
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                resultsInfo.textContent = 'Error occurred while searching';
+                console.error('Search error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -33,7 +33,7 @@ import java.util.UUID;
  *
  * @author Assistant Agent Team
  */
-@Component
+// @Component
 public class MockKnowledgeStoreSearchProvider implements SearchProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(MockKnowledgeStoreSearchProvider.class);
